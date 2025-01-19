@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "4000:4000" 
+    env_file:
+      - ./auth-service/.env
+    depends_on:
+      - database
+
+  reservas-service:
+    build: ./reservas-service
+    ports:
+      - "3001:3001"
+    env_file:
+      - ./reservas-service/.env
+    depends_on:
+      - database
+
+  usuarios-service:
+    build: ./usuarios-service
+    ports:
+      - "3002:3002"
+    env_file:
+      - ./usuarios-service/.env
+    depends_on:
+      - database
+
+  vuelos-service:
+    build: ./vuelos-service
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./vuelos-service/.env
+    depends_on:
+      - database
+
+  gateway:
+    build: ./gateway
+    ports:
+      - "8080:8080" # Ajusta según la configuración de tu API Gateway
+    env_file:
+      - ./gateway/.env
+    depends_on:
+      - auth-service
+      - reservas-service
+      - usuarios-service
+      - vuelos-service
+
+  database:
+    image: mongo # Si usas MongoDB, ajusta según tu DB
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
