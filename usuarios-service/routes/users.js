@@ -9,7 +9,7 @@ router.get("/:usuarioId/reservas", async (req, res) => {
       const token = req.headers['authorization']?.split(' ')[1];
       const { data: reservas }  = await axios.get(`http://localhost:3001/api/reservas/${usuarioId}`, {
         headers: {
-          Authorization: `Bearer ${token}`  // Reemplaza `token` con tu token de autenticación
+          Authorization: `Bearer ${token}` 
         }
       });
   

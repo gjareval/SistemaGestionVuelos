@@ -33,18 +33,7 @@ router.get("/:id", async (req, res) => {
 
 router.put("/:id/reducirDisponibilidad", async (req, res) => {
   try {
-    // Verificar si existe una reserva para este usuario y vuelo
-    /*const reserva = await Booking.findOne({ 
-      userId: req.user.id, 
-      flightId: req.params.id,
-      status: "Pendiente"  // O el estado que definas para reservas activas
-    });
 
-    if (!reserva) {
-      return res.status(404).json({ error: "No se encontró una reserva activa para este vuelo" });
-    }*/
-
-    // Buscar el vuelo
     const vuelo = await Flight.findById(req.params.id);
 
     if (!vuelo) {
@@ -58,10 +47,6 @@ router.put("/:id/reducirDisponibilidad", async (req, res) => {
     vuelo.availability -= 1;
     await vuelo.save();
 
-    // Opcionalmente, puedes actualizar la reserva si es necesario
-    // reserva.status = 'confirmed';  // O el estado que prefieras
-    // await reserva.save();
-
     res.json({ message: "Disponibilidad actualizada", availability: vuelo.availability });
   } catch (error) {
     console.error("Error al actualizar disponibilidad:", error);
@@ -71,18 +56,7 @@ router.put("/:id/reducirDisponibilidad", async (req, res) => {
 
 router.put("/:id/aumentarDisponibilidad", async (req, res) => {
   try {
-    // Verificar si existe una reserva para este usuario y vuelo
-    /*const reserva = await Booking.findOne({ 
-      userId: req.user.id, 
-      flightId: req.params.id,
-      status: "Pendiente"  // O el estado que definas para reservas activas
-    });
 
-    if (!reserva) {
-      return res.status(404).json({ error: "No se encontró una reserva activa para este vuelo" });
-    }*/
-
-    // Buscar el vuelo
     const vuelo = await Flight.findById(req.params.id);
 
     if (!vuelo) {
@@ -91,10 +65,6 @@ router.put("/:id/aumentarDisponibilidad", async (req, res) => {
 
     vuelo.availability += 1;
     await vuelo.save();
-
-    // Opcionalmente, puedes actualizar la reserva si es necesario
-    // reserva.status = 'confirmed';  // O el estado que prefieras
-    // await reserva.save();
 
     res.json({ message: "Disponibilidad actualizada", availability: vuelo.availability });
   } catch (error) {

@@ -1,5 +1,5 @@
 const express = require("express");
-const proxy = require("http-proxy-middleware"); // Asegúrate de instalarlo con `npm install http-proxy-middleware`
+const proxy = require("http-proxy-middleware");
 const app = express();
 
 app.use("/auth", proxy.createProxyMiddleware({ target: "http://auth-service:3000", changeOrigin: true }));

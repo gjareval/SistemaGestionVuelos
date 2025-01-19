@@ -8,14 +8,12 @@ router.get("/:idUsuario", authenticateToken, async (req, res) => {
   try {
       const userId = req.params.idUsuario;
 
-      // Obtener todas las reservas del usuario
       const reservas = await Booking.find({ userId });
 
       if (!reservas.length) {
           return res.status(404).json({ error: "No se encontraron reservas para este usuario" });
       }
 
-      // Obtener detalles de los vuelos asociados a cada reserva
       const reservasConDetalles = await Promise.all(
           reservas.map(async (reserva) => {
               try {
