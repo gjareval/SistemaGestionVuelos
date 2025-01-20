@@ -41,4 +41,20 @@ router.post('/login', async (req, res) => {
     res.json({ token });
 });
 
+router.post("/validate-token", (req, res) => {
+    const { token } = req.body;
+  
+    if (!token) {
+      return res.status(400).send({ message: "No token provided" });
+    }
+  
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      return res.status(200).send({ decoded });
+    } catch (error) {
+      return res.status(401).send({ message: "Token is not valid" });
+    }
+});
+
+
 module.exports = router;

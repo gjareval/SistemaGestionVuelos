@@ -2,9 +2,8 @@ const express = require("express");
 const Booking = require("../models/booking");
 const axios = require("axios"); 
 const router = express.Router();
-const authenticateToken = require('../../auth-service/middleware/auth');
 
-router.get("/:idUsuario", authenticateToken, async (req, res) => {
+router.get("/:idUsuario", async (req, res) => {
   try {
       const userId = req.params.idUsuario;
 
@@ -17,7 +16,7 @@ router.get("/:idUsuario", authenticateToken, async (req, res) => {
       const reservasConDetalles = await Promise.all(
           reservas.map(async (reserva) => {
               try {
-                  const vueloResponse = await axios.get(`http://localhost:3000/api/vuelos/${reserva.flightId}`);
+                  const vueloResponse = await axios.get(`http://vuelos-service:3000/api/vuelos/${reserva.flightId}`);
                   const vuelo = vueloResponse.status === 200 ? vueloResponse.data : null;
                   return { ...reserva.toObject(), flightDetails: vuelo };
               } catch (error) {
@@ -35,7 +34,7 @@ router.get("/:idUsuario", authenticateToken, async (req, res) => {
 });
 
 
-router.post("/", authenticateToken , async (req, res) => {
+router.post("/", async (req, res) => {
     try {
       const userId = req.user.id;
       const { flightId } = req.body;
@@ -44,7 +43,7 @@ router.post("/", authenticateToken , async (req, res) => {
         return res.status(400).json({ error: "El ID del vuelo es requerido" });
       }
   
-      const flightResponse = await axios.get(`http://localhost:3000/api/vuelos/${flightId}`);
+      const flightResponse = await axios.get(`http://vuelos-service:3000/api/vuelos/${flightId}`);
   
       if (flightResponse.status !== 200) {
         return res.status(404).json({ error: "Vuelo no encontrado" });
@@ -63,7 +62,7 @@ router.post("/", authenticateToken , async (req, res) => {
   
       await nuevaReserva.save();
   
-      await axios.put(`http://localhost:3000/api/vuelos/${flightId}/reducirDisponibilidad`);
+      await axios.put(`http://vuelos-service:3000/api/vuelos/${flightId}/reducirDisponibilidad`);
   
       res.status(201).json({ message: "Reserva creada con éxito", reserva: nuevaReserva });
     } catch (error) {
@@ -72,7 +71,7 @@ router.post("/", authenticateToken , async (req, res) => {
     }
 });
 
-router.delete("/:id", authenticateToken, async (req, res) => {
+router.delete("/:id", async (req, res) => {
     try {
       const userId = req.user.id;
       const reservaId = req.params.id;
@@ -87,7 +86,7 @@ router.delete("/:id", authenticateToken, async (req, res) => {
         return res.status(403).json({ error: "No puedes eliminar una reserva que no te pertenece" });
       }
   
-      const vuelo = await axios.get(`http://localhost:3000/api/vuelos/${reserva.flightId}`);
+      const vuelo = await axios.get(`http://vuelos-service:3000/api/vuelos/${reserva.flightId}`);
   
       if (!vuelo) {
         return res.status(404).json({ error: "Vuelo no encontrado" });
@@ -95,7 +94,7 @@ router.delete("/:id", authenticateToken, async (req, res) => {
   
       await reserva.deleteOne(); 
   
-      await axios.put(`http://localhost:3000/api/vuelos/${reserva.flightId}/aumentarDisponibilidad`);
+      await axios.put(`http://vuelos-service:3000/api/vuelos/${reserva.flightId}/aumentarDisponibilidad`);
   
       res.status(200).json({ message: "Reserva eliminada con éxito" });
     } catch (error) {
